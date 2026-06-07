@@ -10,17 +10,19 @@
 </head>
 <body>
 
-  <!-- HERO -->
+  <!-- 3D BACKGROUND -->
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- NAV -->
   <header class="hero">
-    <div class="hero-bg"></div>
     <nav>
       <span class="logo">🔥 NB Roast</span>
       <a href="#how" class="nav-link">How it works</a>
     </nav>
     <div class="hero-content">
-      <div class="badge">AI-Powered Code Review</div>
-      <h1>Your Notebook / GitHub<br><span class="highlight">Just Got Roasted.</span></h1>
-      <p class="hero-sub">Upload your <code>.ipynb</code> or paste a GitHub username. Get brutally honest AI feedback like a senior DS engineer reviewing your work.</p>
+      <div class="badge">✦ AI-Powered Code Review</div>
+      <h1>Your Notebook &<br>GitHub Got<br><span class="highlight">Roasted.</span></h1>
+      <p class="hero-sub">Upload your <code>.ipynb</code> or paste a GitHub username. Get brutally honest AI feedback like a senior DS engineer tearing apart your work.</p>
       <a href="#roast" class="cta-btn">Start the Roast 🔥</a>
     </div>
     <div class="hero-tags">
@@ -30,6 +32,8 @@
       <span>Missing markdown</span>
       <span>No requirements.txt</span>
       <span>Spaghetti cells</span>
+      <span>No train/test split</span>
+      <span>print("done")</span>
     </div>
   </header>
 
@@ -40,8 +44,8 @@
       <div class="step">
         <div class="step-num">01</div>
         <div class="step-text">
-          <strong>Enter your Gemini API key</strong>
-          <p>Get a free key from <a href="https://console.groq.com" target="_blank">Google AI Studio</a>. It stays in your browser only.</p>
+          <strong>Enter your Groq API key</strong>
+          <p>Get a free key from <a href="https://console.groq.com" target="_blank">console.groq.com</a>. It stays in your browser only — never sent anywhere.</p>
         </div>
       </div>
       <div class="step">
@@ -55,7 +59,7 @@
         <div class="step-num">03</div>
         <div class="step-text">
           <strong>Get roasted (and improved)</strong>
-          <p>Receive brutally honest feedback with a score, specific issues, and actionable fixes.</p>
+          <p>Receive brutally honest feedback with a score, specific issues, and actionable fixes from Llama 3.3 70B.</p>
         </div>
       </div>
     </div>
@@ -64,9 +68,8 @@
   <!-- MAIN TOOL -->
   <section id="roast" class="tool-section">
 
-    <!-- API KEY -->
     <div class="api-box">
-      <label for="apiKey">🔑 Gemini API Key</label>
+      <label for="apiKey">🔑 Groq API Key</label>
       <div class="api-row">
         <input type="password" id="apiKey" placeholder="gsk_..." autocomplete="off" />
         <button id="toggleKey" class="icon-btn" title="Show/hide key">👁</button>
@@ -74,13 +77,11 @@
       <small>Never stored. Used only in this browser session.</small>
     </div>
 
-    <!-- TABS -->
     <div class="tabs">
       <button class="tab active" data-tab="notebook">📓 Notebook Roaster</button>
       <button class="tab" data-tab="github">🐙 GitHub Roaster</button>
     </div>
 
-    <!-- NOTEBOOK TAB -->
     <div id="tab-notebook" class="tab-content active">
       <div class="drop-zone" id="dropZone">
         <div class="drop-icon">📂</div>
@@ -93,7 +94,7 @@
         <div id="fileInfo" class="file-info hidden"></div>
       </div>
       <div class="roast-options">
-        <label>Roast intensity:</label>
+        <label>Intensity:</label>
         <div class="intensity-btns">
           <button class="intensity active" data-level="mild">😊 Mild</button>
           <button class="intensity" data-level="spicy">🌶️ Spicy</button>
@@ -103,24 +104,22 @@
       <button class="roast-btn" id="roastNotebook">Roast My Notebook 🔥</button>
     </div>
 
-    <!-- GITHUB TAB -->
     <div id="tab-github" class="tab-content">
       <div class="github-input-wrap">
         <span class="gh-prefix">github.com/</span>
         <input type="text" id="githubUser" placeholder="your-username" />
       </div>
       <div class="roast-options">
-        <label>Focus area:</label>
+        <label>Focus:</label>
         <div class="intensity-btns">
           <button class="focus active" data-focus="overall">🧐 Overall</button>
           <button class="focus" data-focus="ds">📊 Data Science</button>
-          <button class="focus" data-focus="readme">📝 README Quality</button>
+          <button class="focus" data-focus="readme">📝 README</button>
         </div>
       </div>
       <button class="roast-btn" id="roastGitHub">Roast My GitHub 🐙</button>
     </div>
 
-    <!-- RESULT -->
     <div id="result" class="result hidden">
       <div class="result-header">
         <h3 id="resultTitle">Roast Results</h3>
@@ -131,7 +130,6 @@
       <button class="roast-again-btn" id="roastAgain">Roast Again 🔁</button>
     </div>
 
-    <!-- LOADING -->
     <div id="loading" class="loading hidden">
       <div class="flame-loader">🔥</div>
       <p id="loadingMsg">Heating up the roaster...</p>
@@ -139,11 +137,149 @@
 
   </section>
 
-  <!-- FOOTER -->
   <footer>
-    <p>Built with 🔥 by <a href="https://github.com/jashan2128" target="_blank">jashan2128</a> · Powered by Gemini AI</p>
+    <p>Built with 🔥 by <a href="https://github.com/jashan2128" target="_blank">jashan2128</a> · Powered by Groq + Llama 3.3 70B</p>
   </footer>
 
   <script src="app.js"></script>
+  <script>
+  // ─── 3D PARTICLE BACKGROUND ───────────────────────────────────────────────
+  const canvas = document.getElementById('bg-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, particles, mouse = { x: 0, y: 0 };
+
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+
+  function createParticles() {
+    particles = [];
+    const count = Math.floor((W * H) / 12000);
+    for (let i = 0; i < count; i++) {
+      particles.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        z: Math.random() * 3 + 0.5,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.3,
+        size: Math.random() * 1.5 + 0.3,
+        opacity: Math.random() * 0.5 + 0.1,
+        hue: Math.random() > 0.8 ? 25 : 220,
+      });
+    }
+  }
+
+  function drawGrid() {
+    const cols = 12, rows = 8;
+    const cw = W / cols, ch = H / rows;
+    ctx.strokeStyle = 'rgba(255,107,43,0.04)';
+    ctx.lineWidth = 0.5;
+    for (let i = 0; i <= cols; i++) {
+      ctx.beginPath();
+      ctx.moveTo(i * cw, 0);
+      ctx.lineTo(i * cw, H);
+      ctx.stroke();
+    }
+    for (let j = 0; j <= rows; j++) {
+      ctx.beginPath();
+      ctx.moveTo(0, j * ch);
+      ctx.lineTo(W, j * ch);
+      ctx.stroke();
+    }
+  }
+
+  function drawConnections() {
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 130) {
+          const alpha = (1 - dist / 130) * 0.12;
+          const isHot = particles[i].hue === 25 || particles[j].hue === 25;
+          ctx.strokeStyle = isHot
+            ? `rgba(255,107,43,${alpha})`
+            : `rgba(100,120,255,${alpha * 0.5})`;
+          ctx.lineWidth = 0.5;
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.stroke();
+        }
+      }
+    }
+  }
+
+  function animate() {
+    ctx.clearRect(0, 0, W, H);
+    drawGrid();
+
+    // Ambient glow blobs
+    const t = Date.now() * 0.0005;
+    const gx1 = W * 0.7 + Math.sin(t) * 80;
+    const gy1 = H * 0.35 + Math.cos(t * 0.7) * 60;
+    const g1 = ctx.createRadialGradient(gx1, gy1, 0, gx1, gy1, 350);
+    g1.addColorStop(0, 'rgba(255,107,43,0.07)');
+    g1.addColorStop(1, 'transparent');
+    ctx.fillStyle = g1;
+    ctx.fillRect(0, 0, W, H);
+
+    const gx2 = W * 0.2 + Math.cos(t * 0.8) * 100;
+    const gy2 = H * 0.7 + Math.sin(t * 0.6) * 80;
+    const g2 = ctx.createRadialGradient(gx2, gy2, 0, gx2, gy2, 280);
+    g2.addColorStop(0, 'rgba(80,50,200,0.05)');
+    g2.addColorStop(1, 'transparent');
+    ctx.fillStyle = g2;
+    ctx.fillRect(0, 0, W, H);
+
+    drawConnections();
+
+    particles.forEach(p => {
+      // Mouse attraction
+      const mdx = mouse.x - p.x;
+      const mdy = mouse.y - p.y;
+      const md = Math.sqrt(mdx * mdx + mdy * mdy);
+      if (md < 200) {
+        p.vx += mdx / md * 0.02;
+        p.vy += mdy / md * 0.02;
+      }
+
+      p.vx *= 0.98;
+      p.vy *= 0.98;
+      p.x += p.vx;
+      p.y += p.vy;
+
+      if (p.x < 0) p.x = W;
+      if (p.x > W) p.x = 0;
+      if (p.y < 0) p.y = H;
+      if (p.y > H) p.y = 0;
+
+      const pulse = 0.5 + 0.5 * Math.sin(Date.now() * 0.001 * p.z + p.x);
+      const alpha = p.opacity * pulse;
+      const color = p.hue === 25 ? `rgba(255,130,60,${alpha})` : `rgba(140,160,255,${alpha})`;
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size * p.z * 0.6, 0, Math.PI * 2);
+      ctx.fillStyle = color;
+      ctx.fill();
+
+      if (p.hue === 25 && p.z > 2) {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * p.z * 2, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,107,43,${alpha * 0.15})`;
+        ctx.fill();
+      }
+    });
+
+    requestAnimationFrame(animate);
+  }
+
+  window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+  window.addEventListener('resize', () => { resize(); createParticles(); });
+  resize();
+  createParticles();
+  animate();
+  </script>
 </body>
 </html>
