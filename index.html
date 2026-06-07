@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NB Roast — Jupyter Notebook & GitHub Roaster</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-bg"></div>
+    <nav>
+      <span class="logo">🔥 NB Roast</span>
+      <a href="#how" class="nav-link">How it works</a>
+    </nav>
+    <div class="hero-content">
+      <div class="badge">AI-Powered Code Review</div>
+      <h1>Your Notebook / GitHub<br><span class="highlight">Just Got Roasted.</span></h1>
+      <p class="hero-sub">Upload your <code>.ipynb</code> or paste a GitHub username. Get brutally honest AI feedback like a senior DS engineer reviewing your work.</p>
+      <a href="#roast" class="cta-btn">Start the Roast 🔥</a>
+    </div>
+    <div class="hero-tags">
+      <span>Bad variable names</span>
+      <span>No EDA</span>
+      <span>Hardcoded paths</span>
+      <span>Missing markdown</span>
+      <span>No requirements.txt</span>
+      <span>Spaghetti cells</span>
+    </div>
+  </header>
+
+  <!-- HOW IT WORKS -->
+  <section id="how" class="how-section">
+    <h2>How it works</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-text">
+          <strong>Enter your Gemini API key</strong>
+          <p>Get a free key from <a href="https://aistudio.google.com" target="_blank">Google AI Studio</a>. It stays in your browser only.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-text">
+          <strong>Upload notebook or enter GitHub username</strong>
+          <p>Drop a <code>.ipynb</code> file or type any GitHub username for a full profile roast.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-text">
+          <strong>Get roasted (and improved)</strong>
+          <p>Receive brutally honest feedback with a score, specific issues, and actionable fixes.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN TOOL -->
+  <section id="roast" class="tool-section">
+
+    <!-- API KEY -->
+    <div class="api-box">
+      <label for="apiKey">🔑 Gemini API Key</label>
+      <div class="api-row">
+        <input type="password" id="apiKey" placeholder="AIza..." autocomplete="off" />
+        <button id="toggleKey" class="icon-btn" title="Show/hide key">👁</button>
+      </div>
+      <small>Never stored. Used only in this browser session.</small>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+      <button class="tab active" data-tab="notebook">📓 Notebook Roaster</button>
+      <button class="tab" data-tab="github">🐙 GitHub Roaster</button>
+    </div>
+
+    <!-- NOTEBOOK TAB -->
+    <div id="tab-notebook" class="tab-content active">
+      <div class="drop-zone" id="dropZone">
+        <div class="drop-icon">📂</div>
+        <p>Drop your <strong>.ipynb</strong> file here</p>
+        <span>or</span>
+        <label class="file-btn">
+          Browse File
+          <input type="file" id="fileInput" accept=".ipynb" hidden />
+        </label>
+        <div id="fileInfo" class="file-info hidden"></div>
+      </div>
+      <div class="roast-options">
+        <label>Roast intensity:</label>
+        <div class="intensity-btns">
+          <button class="intensity active" data-level="mild">😊 Mild</button>
+          <button class="intensity" data-level="spicy">🌶️ Spicy</button>
+          <button class="intensity" data-level="savage">🔥 Savage</button>
+        </div>
+      </div>
+      <button class="roast-btn" id="roastNotebook">Roast My Notebook 🔥</button>
+    </div>
+
+    <!-- GITHUB TAB -->
+    <div id="tab-github" class="tab-content">
+      <div class="github-input-wrap">
+        <span class="gh-prefix">github.com/</span>
+        <input type="text" id="githubUser" placeholder="your-username" />
+      </div>
+      <div class="roast-options">
+        <label>Focus area:</label>
+        <div class="intensity-btns">
+          <button class="focus active" data-focus="overall">🧐 Overall</button>
+          <button class="focus" data-focus="ds">📊 Data Science</button>
+          <button class="focus" data-focus="readme">📝 README Quality</button>
+        </div>
+      </div>
+      <button class="roast-btn" id="roastGitHub">Roast My GitHub 🐙</button>
+    </div>
+
+    <!-- RESULT -->
+    <div id="result" class="result hidden">
+      <div class="result-header">
+        <h3 id="resultTitle">Roast Results</h3>
+        <button id="copyResult" class="icon-btn" title="Copy">📋</button>
+      </div>
+      <div class="score-wrap" id="scoreWrap"></div>
+      <div id="resultBody" class="result-body"></div>
+      <button class="roast-again-btn" id="roastAgain">Roast Again 🔁</button>
+    </div>
+
+    <!-- LOADING -->
+    <div id="loading" class="loading hidden">
+      <div class="flame-loader">🔥</div>
+      <p id="loadingMsg">Heating up the roaster...</p>
+    </div>
+
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>Built with 🔥 by <a href="https://github.com/jashan2128" target="_blank">jashan2128</a> · Powered by Gemini AI</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
