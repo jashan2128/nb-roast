@@ -257,13 +257,18 @@ async function callGemini(apiKey, prompt, title) {
 
   try {
     const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+      `https://api.groq.com/openai/v1/chat/completions`,
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
+        },
         body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { temperature: 0.85, maxOutputTokens: 2048 }
+          model: 'llama-3.3-70b-versatile',
+          messages: [{ role: 'user', content: prompt }],
+          temperature: 0.85,
+          max_tokens: 2048
         })
       }
     );
@@ -274,18 +279,18 @@ async function callGemini(apiKey, prompt, title) {
       const err = await res.json();
       hideLoading();
       const msg = err?.error?.message || 'API error';
-      if (msg.includes('API_KEY') || msg.includes('key')) {
-        return showError('Invalid API key. Get a free key at aistudio.google.com');
+      if (msg.includes('auth') || msg.includes('401') || msg.includes('key')) {
+        return showError('Invalid API key. Get a free key at console.groq.com');
       }
-      return showError('Gemini API error: ' + msg);
+      return showError('Groq API error: ' + msg);
     }
 
     const data = await res.json();
-    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+    const text = data?.choices?.[0]?.message?.content;
 
     if (!text) {
       hideLoading();
-      return showError('No response from Gemini. Try again!');
+      return showError('No response from Groq. Try again!');
     }
 
     hideLoading();
